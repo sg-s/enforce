@@ -3,7 +3,9 @@ Enforce.py
 ![Python version range](https://img.shields.io/badge/python-3.5.3%20|%203.6%20|%203.7%20|%203.8%20|%203.9-blue.svg)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Testing](https://github.com/SamuelMarks/ml-params-tensorflow/workflows/Test/badge.svg)](https://github.com/SamuelMarks/enforce/actions)
+[![Coverage Status](https://img.shields.io/coveralls/RussBaz/enforce/dev.svg)](https://coveralls.io/github/RussBaz/enforce?branch=dev)
 ![Tested OSs, others may work](https://img.shields.io/badge/Tested%20on-Linux%20|%20macOS%20|%20Windows-green)
+[![PyPI version](https://img.shields.io/pypi/v/enforce.svg)](https://pypi.python.org/pypi/enforce)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 *__Enforce.py__* is a Python 3.5+ library for integration testing and data validation through configurable and optional runtime type hint enforcement. It uses the standard type hinting syntax (defined in PEP 484).
