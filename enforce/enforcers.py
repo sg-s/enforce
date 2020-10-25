@@ -9,20 +9,22 @@ from .wrappers import Proxy
 from .exceptions import RuntimeTypeError
 from .validator import init_validator, Validator
 
-
 # This TypeVar is used to indicate that he result of output validation
 # is the same as the input to the output validation
-T = typing.TypeVar('T')
+T = typing.TypeVar("T")
 
 # Convenience type for storing all incoming arguments in a single container
-Parameters = namedtuple('Parameters', ['args', 'kwargs', 'skip'])
+Parameters = namedtuple("Parameters", ["args", "kwargs", "skip"])
 
 
 class Enforcer:
     """
     A container for storing type checking logic of functions
     """
-    def __init__(self, validator, signature, hints, generic=False, bound=False, settings=None):
+
+    def __init__(
+        self, validator, signature, hints, generic=False, bound=False, settings=None
+    ):
         self.validator = validator
         self.signature = signature
         self.hints = hints
@@ -46,7 +48,7 @@ class Enforcer:
         if self.settings is not None and not self.settings:
             return typing.Callable
 
-        if hasattr(self.reference, '__no_type_check__'):
+        if hasattr(self.reference, "__no_type_check__"):
             return typing.Callable
 
         if self._callable_signature is None:
@@ -73,13 +75,15 @@ class Enforcer:
 
         for name in self.hints.keys():
             # First, check argument types (every key not labeled 'return')
-            if name != 'return':
+            if name != "return":
                 argument = binded_arguments.arguments.get(name)
                 if not self.validator.validate(argument, name):
                     break
                 binded_arguments.arguments[name] = self.validator.data_out[name]
         else:
-            valdated_data = Parameters(binded_arguments.args, binded_arguments.kwargs, skip)
+            valdated_data = Parameters(
+                binded_arguments.args, binded_arguments.kwargs, skip
+            )
             return valdated_data
 
         exception_text = parse_errors(self.validator.errors, self.hints)
@@ -92,12 +96,12 @@ class Enforcer:
         if self.settings is not None and not self.settings.enabled:
             return output_data
 
-        if 'return' in self.hints.keys():
-            if not self.validator.validate(output_data, 'return'):
+        if "return" in self.hints.keys():
+            if not self.validator.validate(output_data, "return"):
                 exception_text = parse_errors(self.validator.errors, self.hints, True)
                 raise RuntimeTypeError(exception_text)
             else:
-                return self.validator.data_out['return']
+                return self.validator.data_out["return"]
         else:
             return output_data
 
@@ -112,6 +116,7 @@ class GenericProxy(ObjectProxy):
     """
     A proxy object for typing.Generics user defined subclasses which always returns proxied objects
     """
+
     __enforcer__ = None
 
     def __init__(self, wrapped):
@@ -127,10 +132,12 @@ class GenericProxy(ObjectProxy):
             super().__init__(wrapped)
             apply_enforcer(self, generic=True)
         else:
-            raise TypeError('Only generics can be wrapped in GenericProxy')
+            raise TypeError("Only generics can be wrapped in GenericProxy")
 
     def __call__(self, *args, **kwargs):
-        return apply_enforcer(self.__wrapped__(*args, **kwargs), generic=True, instance_of=self)
+        return apply_enforcer(
+            self.__wrapped__(*args, **kwargs), generic=True, instance_of=self
+        )
 
     def __getitem__(self, param):
         """
@@ -139,24 +146,28 @@ class GenericProxy(ObjectProxy):
         return GenericProxy(self.__wrapped__.__getitem__(param))
 
 
-def apply_enforcer(func: typing.Callable,
-                   generic: bool=False,
-                   settings = None,
-                   parent_root: typing.Optional[Validator]=None,
-                   instance_of: typing.Optional[GenericProxy]=None) -> typing.Callable:
+def apply_enforcer(
+    func: typing.Callable,
+    generic: bool = False,
+    settings=None,
+    parent_root: typing.Optional[Validator] = None,
+    instance_of: typing.Optional[GenericProxy] = None,
+) -> typing.Callable:
     """
     Adds an Enforcer instance to the passed function/generic if it doesn't yet exist
     or if it is not an instance of Enforcer
 
     Such instance is added as '__enforcer__'
     """
-    if not hasattr(func, '__enforcer__') or not isinstance(func.__enforcer__, Enforcer):
-    #if not hasattr(func, '__enforcer__'):
-    #    func = EnforceProxy(func)
+    if not hasattr(func, "__enforcer__") or not isinstance(func.__enforcer__, Enforcer):
+        # if not hasattr(func, '__enforcer__'):
+        #    func = EnforceProxy(func)
 
-    #if not isinstance(func.__enforcer__, Enforcer):
+        # if not isinstance(func.__enforcer__, Enforcer):
         # Replaces 'incorrect' enforcers
-        func.__enforcer__ = generate_new_enforcer(func, generic, parent_root, instance_of, settings)
+        func.__enforcer__ = generate_new_enforcer(
+            func, generic, parent_root, instance_of, settings
+        )
         func.__enforcer__.reference = func
 
     return func
@@ -168,11 +179,13 @@ def generate_new_enforcer(func, generic, parent_root, instance_of, settings):
     """
     if parent_root is not None:
         if type(parent_root) is not Validator:
-            raise TypeError('Parent validator must be a Validator')
+            raise TypeError("Parent validator must be a Validator")
 
     if instance_of is not None:
         if type(instance_of) is not GenericProxy:
-            raise TypeError('Instance of a generic must be derived from a valid Generic Proxy')
+            raise TypeError(
+                "Instance of a generic must be derived from a valid Generic Proxy"
+            )
 
     if generic:
         hints = OrderedDict()
@@ -185,10 +198,16 @@ def generate_new_enforcer(func, generic, parent_root, instance_of, settings):
         has_origin = func.__origin__ is not None
 
         # Collects generic's parameters - TypeVar-s specified on itself or on origin (if constrained)
-        if not func.__parameters__ and (not has_origin or not func.__origin__.__parameters__):
-            raise TypeError('User defined generic is invalid')
+        if not func.__parameters__ and (
+            not has_origin or not func.__origin__.__parameters__
+        ):
+            raise TypeError("User defined generic is invalid")
 
-        parameters = func.__parameters__ if func.__parameters__ else func.__origin__.__parameters__
+        parameters = (
+            func.__parameters__
+            if func.__parameters__
+            else func.__origin__.__parameters__
+        )
 
         # Maps parameter names to parameters, while preserving the order of their definition
         for param in parameters:
@@ -203,7 +222,9 @@ def generate_new_enforcer(func, generic, parent_root, instance_of, settings):
                 if is_type_of_type(arg, param):
                     param.__bound__ = arg
                 else:
-                    raise TypeError('User defined generic does not accept provided constraints')
+                    raise TypeError(
+                        "User defined generic does not accept provided constraints"
+                    )
 
         # NOTE:
         # Signature in generics should always point to the original unconstrained generic
@@ -229,12 +250,16 @@ def generate_new_enforcer(func, generic, parent_root, instance_of, settings):
     return Enforcer(validator, signature, hints, generic, bound, settings)
 
 
-def parse_errors(errors: typing.List[str], hints:typing.Dict[str, type], return_type: bool=False) -> str:
+def parse_errors(
+    errors: typing.List[str], hints: typing.Dict[str, type], return_type: bool = False
+) -> str:
     """
     Generates an exception message based on which fields failed
     """
     error_message = "       Argument '{0}' was not of type {1}. Actual type was {2}."
-    return_error_message = "        Return value was not of type {0}. Actual type was {1}."
+    return_error_message = (
+        "        Return value was not of type {0}. Actual type was {1}."
+    )
     output = "\n  The following runtime type errors were encountered:"
 
     for error in errors:
@@ -243,9 +268,9 @@ def parse_errors(errors: typing.List[str], hints:typing.Dict[str, type], return_
         if hint is None:
             hint = type(None)
         if return_type:
-            output += '\n' + return_error_message.format(hint, argument_type)
+            output += "\n" + return_error_message.format(hint, argument_type)
         else:
-            output += '\n' +  error_message.format(argument_name, hint, argument_type)
+            output += "\n" + error_message.format(argument_name, hint, argument_type)
     return output
 
 
@@ -278,9 +303,11 @@ def generate_callable_from_signature(signature):
             positional_arguments = ...
             if return_type != typing.Any:
                 result = typing.Callable[positional_arguments, return_type]
-        elif (len(positional_arguments) == 0 or
-            any([a != typing.Any for a in positional_arguments]) or
-            return_type is not typing.Any):
+        elif (
+            len(positional_arguments) == 0
+            or any([a != typing.Any for a in positional_arguments])
+            or return_type is not typing.Any
+        ):
             result = typing.Callable[positional_arguments, return_type]
 
     return result

@@ -5,13 +5,20 @@ from collections import namedtuple
 from collections.abc import Sized
 from typing import TypeVar, Any, Tuple, Dict, List, Union, Optional, Generic, NamedTuple
 
-from enforce.types import is_type_of_type, is_named_tuple, EnhancedTypeVar, Integer, Boolean
+from enforce.types import (
+    is_type_of_type,
+    is_named_tuple,
+    EnhancedTypeVar,
+    Integer,
+    Boolean,
+)
 
 
 class Animal:
     """
     Dummy class
     """
+
     pass
 
 
@@ -19,6 +26,7 @@ class Pet(Animal):
     """
     Dummy subclass of Animal
     """
+
     pass
 
 
@@ -26,6 +34,7 @@ class Chihuahua(Pet):
     """
     Dummy subclass of Pet
     """
+
     pass
 
 
@@ -33,116 +42,186 @@ class TypesCheckingTests(unittest.TestCase):
     """
     Tests for the type checking function
     """
-    
-    def check_covariant(self, type_a, type_b, local_variables=None, global_variables=None):
+
+    def check_covariant(
+        self, type_a, type_b, local_variables=None, global_variables=None
+    ):
         """
         Template for performing certain covariant type checks
         """
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_b,
-                                        covariant=True,
-                                        contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertFalse(is_type_of_type(type_b,
-                                         type_a,
-                                         covariant=True,
-                                         contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_a,
-                                        covariant=True,
-                                        contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_b,
+                covariant=True,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertFalse(
+            is_type_of_type(
+                type_b,
+                type_a,
+                covariant=True,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_a,
+                covariant=True,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
 
-    def check_contravariant(self, type_a, type_b, local_variables=None, global_variables=None):
+    def check_contravariant(
+        self, type_a, type_b, local_variables=None, global_variables=None
+    ):
         """
         Template for performing certain contravariant type checks
         """
-        self.assertFalse(is_type_of_type(type_a,
-                                        type_b,
-                                        covariant=False,
-                                        contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_b,
-                                         type_a,
-                                         covariant=False,
-                                         contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_a,
-                                        covariant=False,
-                                        contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
+        self.assertFalse(
+            is_type_of_type(
+                type_a,
+                type_b,
+                covariant=False,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_b,
+                type_a,
+                covariant=False,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_a,
+                covariant=False,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
 
-    def check_invariant(self, type_a, type_b, local_variables=None, global_variables=None):
+    def check_invariant(
+        self, type_a, type_b, local_variables=None, global_variables=None
+    ):
         """
         Template for performing certain invariant type checks
         """
-        self.assertFalse(is_type_of_type(type_a,
-                                        type_b,
-                                        covariant=False,
-                                        contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertFalse(is_type_of_type(type_b,
-                                         type_a,
-                                         covariant=False,
-                                         contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_a,
-                                        covariant=False,
-                                        contravariant=False,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
+        self.assertFalse(
+            is_type_of_type(
+                type_a,
+                type_b,
+                covariant=False,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertFalse(
+            is_type_of_type(
+                type_b,
+                type_a,
+                covariant=False,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_a,
+                covariant=False,
+                contravariant=False,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
 
-    def check_bivariant(self, type_a, type_b, local_variables=None, global_variables=None):
+    def check_bivariant(
+        self, type_a, type_b, local_variables=None, global_variables=None
+    ):
         """
         Template for performing certain bivariant type checks
         """
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_b,
-                                        covariant=True,
-                                        contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_b,
-                                         type_a,
-                                         covariant=True,
-                                         contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_a,
-                                        covariant=True,
-                                        contravariant=True,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_b,
+                covariant=True,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_b,
+                type_a,
+                covariant=True,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_a,
+                covariant=True,
+                contravariant=True,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
 
-    def check_default_invariant_behaviour(self, type_a, type_b, local_variables=None, global_variables=None):
+    def check_default_invariant_behaviour(
+        self, type_a, type_b, local_variables=None, global_variables=None
+    ):
         """
         Template for performing certain type checks which use default covariant/contravariant settings
         The default is invariant
         """
-        self.assertFalse(is_type_of_type(type_a,
-                                        type_b,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertFalse(is_type_of_type(type_b,
-                                         type_a,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
-        self.assertTrue(is_type_of_type(type_a,
-                                        type_a,
-                                        local_variables=local_variables,
-                                        global_variables=global_variables))
+        self.assertFalse(
+            is_type_of_type(
+                type_a,
+                type_b,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertFalse(
+            is_type_of_type(
+                type_b,
+                type_a,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
+        self.assertTrue(
+            is_type_of_type(
+                type_a,
+                type_a,
+                local_variables=local_variables,
+                global_variables=global_variables,
+            )
+        )
 
     def test_covariant(self):
         """
@@ -191,7 +270,7 @@ class TypesCheckingTests(unittest.TestCase):
         self.assertTrue(is_type_of_type(Animal, Any))
         self.assertTrue(is_type_of_type(None, Any))
         self.assertTrue(is_type_of_type(12, Any))
-        self.assertTrue(is_type_of_type([1, 3, 'str'], Any))
+        self.assertTrue(is_type_of_type([1, 3, "str"], Any))
         self.assertTrue(type, Any)
 
     def test_enhanced_type_var(self):
@@ -199,7 +278,7 @@ class TypesCheckingTests(unittest.TestCase):
         Verifies that type checking behaves exactly the same with an Enhanced TypeVar
         as it would with a default TypeVar
         """
-        T = EnhancedTypeVar('T', str, int, Animal)
+        T = EnhancedTypeVar("T", str, int, Animal)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(int, T))
         self.assertTrue(is_type_of_type(str, T))
@@ -211,7 +290,7 @@ class TypesCheckingTests(unittest.TestCase):
         Verifies that type checking works as expected with parameterless TypeVar
         and it works invariantly
         """
-        T = TypeVar('T')
+        T = TypeVar("T")
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(None, T))
 
@@ -219,7 +298,7 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that type checking respects the TypeVar constraints
         """
-        T = TypeVar('T', Animal, int)
+        T = TypeVar("T", Animal, int)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(int, T))
         self.assertFalse(is_type_of_type(None, T))
@@ -228,7 +307,7 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that type checking works with covariant TypeVars
         """
-        T = TypeVar('T', Animal, int, covariant=True)
+        T = TypeVar("T", Animal, int, covariant=True)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertTrue(is_type_of_type(Chihuahua, T))
@@ -239,7 +318,7 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that type checking works with contravariant TypeVars
         """
-        T = TypeVar('T', Pet, int, contravariant=True)
+        T = TypeVar("T", Pet, int, contravariant=True)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertFalse(is_type_of_type(Chihuahua, T))
@@ -251,7 +330,7 @@ class TypesCheckingTests(unittest.TestCase):
         Default TypeVars cannot be bivariant
         This test verifies if an Enhanced version of it will properly checked
         """
-        T = EnhancedTypeVar('T', Pet, int, covariant=True, contravariant=True)
+        T = EnhancedTypeVar("T", Pet, int, covariant=True, contravariant=True)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertTrue(is_type_of_type(Chihuahua, T))
@@ -263,30 +342,30 @@ class TypesCheckingTests(unittest.TestCase):
         Verifies that type checking works with bounded TypeVars
         It uses Enhanced TypeVars for bivariant tests as default TypeVars cannot be bivariant
         """
-        T = TypeVar('T', bound=Animal)
+        T = TypeVar("T", bound=Animal)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertFalse(is_type_of_type(Pet, T))
         self.assertFalse(is_type_of_type(Chihuahua, T))
         self.assertFalse(is_type_of_type(int, T))
         self.assertFalse(is_type_of_type(None, T))
 
-        T = TypeVar('T', covariant=True, bound=Animal)
+        T = TypeVar("T", covariant=True, bound=Animal)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertTrue(is_type_of_type(Chihuahua, T))
         self.assertFalse(is_type_of_type(int, T))
         self.assertFalse(is_type_of_type(None, T))
 
-        T = TypeVar('T', contravariant=True, bound=Pet)
+        T = TypeVar("T", contravariant=True, bound=Pet)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertFalse(is_type_of_type(Chihuahua, T))
         self.assertFalse(is_type_of_type(int, T))
         self.assertFalse(is_type_of_type(None, T))
-        
+
         # Bivariant TypeVars are not supported by default
         # Therefore, testing it with an Enhanced version of TypeVar
-        T = EnhancedTypeVar('T', covariant=True, contravariant=True, bound=Pet)
+        T = EnhancedTypeVar("T", covariant=True, contravariant=True, bound=Pet)
         self.assertTrue(is_type_of_type(Animal, T))
         self.assertTrue(is_type_of_type(Pet, T))
         self.assertTrue(is_type_of_type(Chihuahua, T))
@@ -297,44 +376,54 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that type checking works with Any construct if it is provided as a string with the type name
         """
-        self.assertTrue(is_type_of_type(Animal, 'Any'))
+        self.assertTrue(is_type_of_type(Animal, "Any"))
 
     def test_none_from_str(self):
         """
         Verifies that type checking works with None if it is provided as a string with the type name
         """
-        self.assertTrue(is_type_of_type(None, 'None'))
+        self.assertTrue(is_type_of_type(None, "None"))
 
     def test_covariant_from_str(self):
         """
         Verifies that covariant type checking works as expected when types are given as strings with type names
         """
-        self.check_covariant('Pet', 'Animal', local_variables=locals(), global_variables=globals())
+        self.check_covariant(
+            "Pet", "Animal", local_variables=locals(), global_variables=globals()
+        )
 
     def test_contravariant_from_str(self):
         """
         Verifies that contravariant type checking works as expected when types are given as strings with type names
         """
-        self.check_contravariant('Pet', 'Animal', local_variables=locals(), global_variables=globals())
+        self.check_contravariant(
+            "Pet", "Animal", local_variables=locals(), global_variables=globals()
+        )
 
     def test_invariant_from_strt(self):
         """
         Verifies that invariant type checking works as expected when types are given as strings with type names
         """
-        self.check_invariant('Pet', 'Animal', local_variables=locals(), global_variables=globals())
+        self.check_invariant(
+            "Pet", "Animal", local_variables=locals(), global_variables=globals()
+        )
 
     def test_bivariant_from_str(self):
         """
         Verifies that bivariant type checking works as expected when types are given as strings with type names
         """
-        self.check_bivariant('Pet', 'Animal', local_variables=locals(), global_variables=globals())
+        self.check_bivariant(
+            "Pet", "Animal", local_variables=locals(), global_variables=globals()
+        )
 
     def test_default_behaviour_from_str(self):
         """
         Verifies that the default type checking is invariant and
         that it works as expected when types are given as strings with type names
         """
-        self.check_default_invariant_behaviour('Pet', 'Animal', local_variables=locals(), global_variables=globals())
+        self.check_default_invariant_behaviour(
+            "Pet", "Animal", local_variables=locals(), global_variables=globals()
+        )
 
     def test_in_built_types(self):
         """
@@ -348,8 +437,8 @@ class TypesCheckingTests(unittest.TestCase):
         f = True  # Boolean
         g = {}  # Dictionary
         h = []  # List
-        i = ''  # String
-        k = b''  # Bytes
+        i = ""  # String
+        k = b""  # Bytes
 
         self.assertTrue(is_type_of_type(type(a), Tuple))
         self.assertTrue(is_type_of_type(type(b), Integer))
@@ -366,9 +455,9 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that nested types, such as Unions, can be compared
         """
-        T = TypeVar('T', Union[int, str], bytes)
-        K = TypeVar('K', Optional[int], str)
-        
+        T = TypeVar("T", Union[int, str], bytes)
+        K = TypeVar("K", Optional[int], str)
+
         self.assertTrue(is_type_of_type(Union[str, int], T))
         self.assertTrue(is_type_of_type(bytes, T))
 
@@ -388,7 +477,7 @@ class TypesCheckingTests(unittest.TestCase):
         """
         from enforce.enforcers import GenericProxy
 
-        T = TypeVar('T')
+        T = TypeVar("T")
 
         class A(Generic[T]):
             pass
@@ -432,6 +521,7 @@ class TypesCheckingTests(unittest.TestCase):
         it would be a subclass of that ABC.
         This check must be done recursively.
         """
+
         # NOTE: Subclass test is a covariant check
         class A(ABC):
             pass
@@ -540,8 +630,8 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that a subclasshook in ABC is respected and it takes precedence over ABC registry
         """
-        class A(ABC):
 
+        class A(ABC):
             @classmethod
             def __subclasshook__(cls, C):
                 try:
@@ -613,6 +703,7 @@ class TypesCheckingTests(unittest.TestCase):
         """
         Verifies that subclasscheck is always respected if present
         """
+
         class A:
             @classmethod
             def __subclasscheck__(cls, C):
@@ -692,14 +783,14 @@ class EnhancedTypeVarTests(unittest.TestCase):
     """
     Tests for the Enhanced TypeVar class
     """
-    
+
     def test_init_enhanced_type_var(self):
         """
         Verifies that Enhanced TypeVar can be initialised like any other TypeVar
         or directly from an existing TypeVar
         """
-        T = TypeVar('T')
-        ET = EnhancedTypeVar('T', type_var=T)
+        T = TypeVar("T")
+        ET = EnhancedTypeVar("T", type_var=T)
         self.assertEqual(T.__name__, ET.__name__)
         self.assertEqual(T.__bound__, ET.__bound__)
         self.assertEqual(T.__covariant__, ET.__covariant__)
@@ -707,12 +798,18 @@ class EnhancedTypeVarTests(unittest.TestCase):
         self.assertEqual(T.__constraints__, ET.__constraints__)
         self.assertEqual(repr(T), repr(ET))
 
-        name = 'ET'
+        name = "ET"
         covariant = True
         contravariant = False
         bound = None
         constraints = (str, int)
-        ET = EnhancedTypeVar(name, *constraints, covariant=covariant, contravariant=contravariant, bound=bound)
+        ET = EnhancedTypeVar(
+            name,
+            *constraints,
+            covariant=covariant,
+            contravariant=contravariant,
+            bound=bound
+        )
         self.assertEqual(ET.__name__, name)
         self.assertEqual(ET.__bound__, bound)
         self.assertEqual(ET.__covariant__, covariant)
@@ -723,22 +820,22 @@ class EnhancedTypeVarTests(unittest.TestCase):
         """
         Verifies that the Enhanced Type Variable can be both bound and constrained
         """
-        ET = EnhancedTypeVar('T', int, str, bound=Boolean)
+        ET = EnhancedTypeVar("T", int, str, bound=Boolean)
 
     def test_constraints(self):
         """
         Verifies that enhanced variable can return its constraints further constrained by the __bound__ value
         Also verifies that the result is always as a tuple
         """
-        ETA = EnhancedTypeVar('ETA')
-        ETB = EnhancedTypeVar('ETB', int, str)
-        ETC = EnhancedTypeVar('ETC', bound=int)
-        ETD = EnhancedTypeVar('ETD', int, str, bound=Boolean)
+        ETA = EnhancedTypeVar("ETA")
+        ETB = EnhancedTypeVar("ETB", int, str)
+        ETC = EnhancedTypeVar("ETC", bound=int)
+        ETD = EnhancedTypeVar("ETD", int, str, bound=Boolean)
 
         self.assertEqual(ETA.constraints, tuple())
         self.assertEqual(ETB.constraints, (int, str))
-        self.assertEqual(ETC.constraints, (int, ))
-        self.assertEqual(ETD.constraints, (Boolean, ))
+        self.assertEqual(ETC.constraints, (int,))
+        self.assertEqual(ETD.constraints, (Boolean,))
 
         self.assertIs(type(ETA.constraints), tuple)
         self.assertIs(type(ETB.constraints), tuple)
@@ -749,7 +846,7 @@ class EnhancedTypeVarTests(unittest.TestCase):
         """
         Verifies that it is possible to initialise a bivariant Enhanced TypeVar
         """
-        ET = EnhancedTypeVar('ET', covariant=True, contravariant=True)
+        ET = EnhancedTypeVar("ET", covariant=True, contravariant=True)
         self.assertTrue(ET.__covariant__)
         self.assertTrue(ET.__contravariant__)
 
@@ -758,23 +855,23 @@ class EnhancedTypeVarTests(unittest.TestCase):
         Verifies that a consistent with TypeVar representation is shown when an Enhanced TypeVar is used
         The symbol for bivariant was randomly chosen as '*'
         """
-        ET = EnhancedTypeVar('ET', covariant=True, contravariant=True)
-        self.assertEqual(repr(ET), '*ET')
-        ET = EnhancedTypeVar('ET', covariant=True)
-        self.assertEqual(repr(ET), '+ET')
-        ET = EnhancedTypeVar('ET', contravariant=True)
-        self.assertEqual(repr(ET), '-ET')
-        ET = EnhancedTypeVar('ET')
-        self.assertEqual(repr(ET), '~ET')
+        ET = EnhancedTypeVar("ET", covariant=True, contravariant=True)
+        self.assertEqual(repr(ET), "*ET")
+        ET = EnhancedTypeVar("ET", covariant=True)
+        self.assertEqual(repr(ET), "+ET")
+        ET = EnhancedTypeVar("ET", contravariant=True)
+        self.assertEqual(repr(ET), "-ET")
+        ET = EnhancedTypeVar("ET")
+        self.assertEqual(repr(ET), "~ET")
 
     def test_equality(self):
         """
         Verifies that enhanced type variable can be compared to other enhanced variables
         """
-        ETA = EnhancedTypeVar('ET', int, str, covariant=True, contravariant=True)
-        ETB = EnhancedTypeVar('ET', int, str, covariant=True, contravariant=True)
-        ETC = EnhancedTypeVar('ET', int, str, covariant=True, contravariant=False)
-        ETD = TypeVar('ET', int, str, covariant=True, contravariant=False)
+        ETA = EnhancedTypeVar("ET", int, str, covariant=True, contravariant=True)
+        ETB = EnhancedTypeVar("ET", int, str, covariant=True, contravariant=True)
+        ETC = EnhancedTypeVar("ET", int, str, covariant=True, contravariant=False)
+        ETD = TypeVar("ET", int, str, covariant=True, contravariant=False)
 
         self.assertEqual(ETA, ETB)
         self.assertNotEqual(ETA, ETC)
@@ -786,17 +883,16 @@ class EnhancedTypeVarTests(unittest.TestCase):
         """
         Verifies that a single constraint is not allowed and TypeError is raised
         """
-        ET = EnhancedTypeVar('ET')
-        ET = EnhancedTypeVar('ET', int, str)
+        ET = EnhancedTypeVar("ET")
+        ET = EnhancedTypeVar("ET", int, str)
         with self.assertRaises(TypeError):
-            ET = EnhancedTypeVar('ET', int)
+            ET = EnhancedTypeVar("ET", int)
 
 
 class TypeCheckingUtilityTests(unittest.TestCase):
-
     def test_if_named_tuple(self):
-        NT1 = namedtuple('NT1', 'x, y, z')
-        NT2 = NamedTuple('NT2', [('x', int), ('y', int), ('z', int)])
+        NT1 = namedtuple("NT1", "x, y, z")
+        NT2 = NamedTuple("NT2", [("x", int), ("y", int), ("z", int)])
         NT3 = tuple
         NT4 = int
 
@@ -823,5 +919,5 @@ class TypeCheckingUtilityTests(unittest.TestCase):
         self.assertFalse(is_named_tuple(nt5))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

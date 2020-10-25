@@ -10,8 +10,7 @@ except ImportError:
 from . import nodes
 from .types import EnhancedTypeVar, is_named_tuple
 
-
-ParserChoice = namedtuple('ParserChoice', ['validator', 'parser'])
+ParserChoice = namedtuple("ParserChoice", ["validator", "parser"])
 
 
 def get_parser(node, hint, validator, parsers=None):
@@ -24,7 +23,9 @@ def get_parser(node, hint, validator, parsers=None):
     if type(hint) == type:
         parser = parsers.get(hint, _get_aliased_parser_or_default(hint, _parse_default))
     else:
-        parser = parsers.get(type(hint), _get_aliased_parser_or_default(hint, _parse_default))
+        parser = parsers.get(
+            type(hint), _get_aliased_parser_or_default(hint, _parse_default)
+        )
 
     yield parser(node, hint, validator, parsers)
 
@@ -38,18 +39,18 @@ def _get_aliased_parser_or_default(hint, default):
 
 
 def _parse_namedtuple(node, hint, validator, parsers):
-    #fields = hint._fields
-    #field_types = hint._field_types
+    # fields = hint._fields
+    # field_types = hint._field_types
 
-    #args = ''.join((field_types.get(field, typing.Any)).__name__ + ', ' for field in fields)
-    #args = args[:-2]
+    # args = ''.join((field_types.get(field, typing.Any)).__name__ + ', ' for field in fields)
+    # args = args[:-2]
 
-    #template = """typing.Tuple[{args}]"""
-    #formatted_template = template.format(args=args)
+    # template = """typing.Tuple[{args}]"""
+    # formatted_template = template.format(args=args)
 
-    #new_hint = eval(formatted_template)
+    # new_hint = eval(formatted_template)
 
-    #yield _parse_tuple(node, hint, validator, parsers)
+    # yield _parse_tuple(node, hint, validator, parsers)
 
     new_node = yield nodes.NamedTupleNode(hint)
     validator.all_nodes.append(new_node)
@@ -57,7 +58,7 @@ def _parse_namedtuple(node, hint, validator, parsers):
 
 
 def _parse_default(node, hint, validator, parsers):
-    if str(hint).startswith('typing.Union'):
+    if str(hint).startswith("typing.Union"):
         yield _parse_union(node, hint, validator, parsers)
     else:
         new_node = yield nodes.SimpleNode(hint)
@@ -91,7 +92,9 @@ def _parse_type_var(node, hint, validator, parsers):
         except KeyError:
             covariant = hint.__covariant__
             contravariant = hint.__contravariant__
-            new_node = yield nodes.TypeVarNode(covariant=covariant, contravariant=contravariant)
+            new_node = yield nodes.TypeVarNode(
+                covariant=covariant, contravariant=contravariant
+            )
             if hint.__bound__ is not None:
                 yield get_parser(new_node, hint.__bound__, validator, parsers)
             elif hint.__constraints__:
@@ -228,10 +231,9 @@ TYPE_PARSERS = {
     typing.TypeVar: _parse_type_var,
     EnhancedTypeVar: _parse_type_var,
     complex: _parse_complex,
-    bytes: _parse_bytes
-    }
-
+    bytes: _parse_bytes,
+}
 
 ALIASED_TYPE_PARSERS = (
     ParserChoice(validator=is_named_tuple, parser=_parse_namedtuple),
-    )
+)

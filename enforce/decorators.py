@@ -7,10 +7,10 @@ from multiprocessing import RLock
 from wrapt import decorator, ObjectProxy
 
 from .settings import Settings
+
 # from .wrappers import Proxy
 from .enforcers import apply_enforcer, Parameters, GenericProxy
 from .types import is_type_of_type
-
 
 BuildLock = RLock()
 RunLock = RLock()
@@ -23,10 +23,10 @@ def runtime_validation(data=None, *, enabled=None, group=None):
     """
     with RunLock:
         if enabled is not None and not isinstance(enabled, bool):
-            raise TypeError('Enabled parameter must be boolean')
+            raise TypeError("Enabled parameter must be boolean")
 
         if group is not None and not isinstance(group, str):
-            raise TypeError('Group parameter must be string')
+            raise TypeError("Group parameter must be string")
 
         if enabled is None and group is None:
             enabled = True
@@ -58,13 +58,15 @@ def runtime_validation(data=None, *, enabled=None, group=None):
         return generate_decorated()
 
 
-def decorate(data, configuration, obj_instance=None, parent_root=None) -> typing.Callable:
+def decorate(
+    data, configuration, obj_instance=None, parent_root=None
+) -> typing.Callable:
     """
     Performs the function decoration with a type checking wrapper
 
     Works only if '__annotations__' are defined on the passed object
     """
-    if not hasattr(data, '__annotations__'):
+    if not hasattr(data, "__annotations__"):
         return data
 
     data = apply_enforcer(data, parent_root=parent_root, settings=configuration)
@@ -92,7 +94,7 @@ def get_universal_decorator():
             if instance is not None and not inspect.isclass(instance):
                 instance_method = True
 
-            if hasattr(wrapped, '__no_type_check__'):
+            if hasattr(wrapped, "__no_type_check__"):
                 skip = True
 
             if instance_method:
@@ -124,7 +126,7 @@ def get_wrapper_builder(configuration, excluded_fields=None):
     if excluded_fields is None:
         excluded_fields = set()
 
-    excluded_fields |= {'__class__', '__new__'}
+    excluded_fields |= {"__class__", "__new__"}
 
     def build_wrapper(wrapped, instance, args, kwargs):
         if instance is None:
@@ -143,10 +145,20 @@ def get_wrapper_builder(configuration, excluded_fields=None):
 
                         if old_attr.__class__ is property:
                             old_fset = old_attr.fset
-                            new_fset = decorate(old_fset, configuration, obj_instance=None, parent_root=root)
+                            new_fset = decorate(
+                                old_fset,
+                                configuration,
+                                obj_instance=None,
+                                parent_root=root,
+                            )
                             new_attr = old_attr.setter(new_fset)
                         else:
-                            new_attr = decorate(old_attr, configuration, obj_instance=None, parent_root=root)
+                            new_attr = decorate(
+                                old_attr,
+                                configuration,
+                                obj_instance=None,
+                                parent_root=root,
+                            )
                         setattr(wrapped, attr_name, new_attr)
                     except AttributeError:
                         pass
@@ -168,7 +180,9 @@ def get_wrapper_builder(configuration, excluded_fields=None):
 
 
 def get_typed_namedtuple(configuration, typed_namedtuple, fields, fields_types):
-    args = ''.join(field + ': ' + (fields_types.get(field, any)).__name__ + ',' for field in fields)
+    args = "".join(
+        field + ": " + (fields_types.get(field, any)).__name__ + "," for field in fields
+    )
     args = args[:-1]
 
     context = {}
@@ -179,13 +193,13 @@ def get_typed_namedtuple(configuration, typed_namedtuple, fields, fields_types):
 
     exec(new_init_template, context)
 
-    init_data = context['init_data']
+    init_data = context["init_data"]
 
     init_data = decorate(init_data, configuration)
 
     class NamedTupleProxy(ObjectProxy):
         def __copy__(self):
-          return copy(self.__wrapped__)
+            return copy(self.__wrapped__)
 
         def __call__(self, *args, **kwargs):
             data = init_data(*args, **kwargs)

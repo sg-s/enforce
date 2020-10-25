@@ -20,13 +20,15 @@ class EnhancedTypeVar:
     Can be constructed as any other TypeVar or from existing TypeVars
     """
 
-    def __init__(self,
-                 name: str,
-                 *constraints: Any,
-                 bound: Optional[type] = None,
-                 covariant: Optional[bool] = False,
-                 contravariant: Optional[bool] = False,
-                 type_var: Optional['TypeVar'] = None):
+    def __init__(
+        self,
+        name: str,
+        *constraints: Any,
+        bound: Optional[type] = None,
+        covariant: Optional[bool] = False,
+        contravariant: Optional[bool] = False,
+        type_var: Optional["TypeVar"] = None
+    ):
         if type_var is not None:
             self.__name__ = type_var.__name__
             self.__bound__ = type_var.__bound__
@@ -40,7 +42,7 @@ class EnhancedTypeVar:
             self.__contravariant__ = contravariant
             self.__constraints__ = tuple(constraints)
             if len(self.__constraints__) == 1:
-                raise TypeError('A single constraint is not allowed')
+                raise TypeError("A single constraint is not allowed")
 
     @property
     def constraints(self):
@@ -48,7 +50,7 @@ class EnhancedTypeVar:
         Returns constrains further constrained by the __bound__ value
         """
         if self.__bound__:
-            return (self.__bound__, )
+            return (self.__bound__,)
         else:
             return self.__constraints__
 
@@ -56,11 +58,13 @@ class EnhancedTypeVar:
         """
         Allows comparing Enhanced Type Var to other type variables (enhanced or not)
         """
-        name = getattr(data, '__name__', None) == self.__name__
-        bound = getattr(data, '__bound__', None) == self.__bound__
-        covariant = getattr(data, '__covariant__', None) == self.__covariant__
-        contravariant = getattr(data, '__contravariant__', None) == self.__contravariant__
-        constraints = getattr(data, '__constraints__', None) == self.__constraints__
+        name = getattr(data, "__name__", None) == self.__name__
+        bound = getattr(data, "__bound__", None) == self.__bound__
+        covariant = getattr(data, "__covariant__", None) == self.__covariant__
+        contravariant = (
+            getattr(data, "__contravariant__", None) == self.__contravariant__
+        )
+        constraints = getattr(data, "__constraints__", None) == self.__constraints__
         return all((name, bound, covariant, contravariant, constraints))
 
     def __hash__(self):
@@ -80,13 +84,13 @@ class EnhancedTypeVar:
         Further enhances TypeVar representation through addition of bi-variant symbol
         """
         if self.__covariant__ and self.__contravariant__:
-            prefix = '*'
+            prefix = "*"
         elif self.__covariant__:
-            prefix = '+'
+            prefix = "+"
         elif self.__contravariant__:
-            prefix = '-'
+            prefix = "-"
         else:
-            prefix = '~'
+            prefix = "~"
         return prefix + self.__name__
 
 
@@ -103,6 +107,7 @@ class Integer(numbers.Integral):
     """
     Integer stub class
     """
+
     pass
 
 
@@ -110,6 +115,7 @@ class Boolean(numbers.Integral):
     """
     Boolean stub class
     """
+
     pass
 
 
@@ -122,27 +128,24 @@ TYPE_ALIASES = {
     dict: typing.Dict,
     list: typing.List,
     set: typing.Set,
-    None: type(None)
+    None: type(None),
 }
-
 
 REVERSED_TYPE_ALIASES = {v: k for k, v in TYPE_ALIASES.items()}
 
-
 # Tells the type checking method to ignore __subclasscheck__
 # on the following types and their subclasses
-IGNORED_SUBCLASSCHECKS = [
-    Generic
-]
+IGNORED_SUBCLASSCHECKS = [Generic]
 
 
-def is_type_of_type(data: Union[type, str, None],
-                    data_type: Union[type, str, 'TypeVar', EnhancedTypeVar, None],
-                    covariant: bool = False,
-                    contravariant: bool = False,
-                    local_variables: Optional[typing.Dict]=None,
-                    global_variables: Optional[typing.Dict]=None
-                   ) -> bool:
+def is_type_of_type(
+    data: Union[type, str, None],
+    data_type: Union[type, str, "TypeVar", EnhancedTypeVar, None],
+    covariant: bool = False,
+    contravariant: bool = False,
+    local_variables: Optional[typing.Dict] = None,
+    global_variables: Optional[typing.Dict] = None,
+) -> bool:
     """
     Returns if the type or type like object is of the same type as constrained
     Support co-variance, contra-variance and TypeVar-s
@@ -156,7 +159,9 @@ def is_type_of_type(data: Union[type, str, None],
     if global_variables is None:
         global_variables = {}
 
-    calling_scope = ChainMap(local_variables, global_variables, vars(typing), vars(builtins))
+    calling_scope = ChainMap(
+        local_variables, global_variables, vars(typing), vars(builtins)
+    )
 
     # If a variable is string, then it should look it up in the scope of a calling function
     if isinstance(data_type, str):
@@ -169,7 +174,9 @@ def is_type_of_type(data: Union[type, str, None],
     data = visit(sort_and_flat_type(data))
 
     subclasscheck_enabled = True
-    is_type_var = data_type.__class__ is TypeVar or data_type.__class__ is EnhancedTypeVar
+    is_type_var = (
+        data_type.__class__ is TypeVar or data_type.__class__ is EnhancedTypeVar
+    )
 
     # TypeVars have a list of constraints and it can be bound to a specific constraint (which takes precedence)
     if is_type_var:
@@ -183,16 +190,21 @@ def is_type_of_type(data: Union[type, str, None],
         contravariant = data_type.__contravariant__
     elif data_type is Any:
         constraints = [Any]
-    elif str(data_type).startswith('typing.Union'):
+    elif str(data_type).startswith("typing.Union"):
         constraints = [data_type]
     else:
-        subclasscheck_enabled = not any(data_type.__class__ is t or t in data_type.__mro__ for t in IGNORED_SUBCLASSCHECKS)
+        subclasscheck_enabled = not any(
+            data_type.__class__ is t or t in data_type.__mro__
+            for t in IGNORED_SUBCLASSCHECKS
+        )
         constraints = [data_type]
 
     if not constraints:
         constraints = [Any]
 
-    constraints = [TYPE_ALIASES.get(constraint, constraint) for constraint in constraints]
+    constraints = [
+        TYPE_ALIASES.get(constraint, constraint) for constraint in constraints
+    ]
 
     if Any in constraints:
         return True
@@ -203,13 +215,17 @@ def is_type_of_type(data: Union[type, str, None],
             subclass_check = None
 
             if not is_type_var and subclasscheck_enabled:
-                subclass_check = perform_subclasscheck(data, data_type, covariant, contravariant)
+                subclass_check = perform_subclasscheck(
+                    data, data_type, covariant, contravariant
+                )
 
             if subclass_check is not None:
                 return subclass_check
 
             if covariant and contravariant:
-                return any((d in data.__mro__) or (data in d.__mro__) for d in constraints)
+                return any(
+                    (d in data.__mro__) or (data in d.__mro__) for d in constraints
+                )
 
             if covariant:
                 return any(d in data.__mro__ for d in constraints)
@@ -231,7 +247,8 @@ def perform_subclasscheck(data, data_type, covariant, contravariant):
         result = data_type.__subclasscheck__(data)
 
         if data is not reversed_data:
-            if reversed_data is None: reversed_data = type(None)
+            if reversed_data is None:
+                reversed_data = type(None)
             result = result or data_type.__subclasscheck__(reversed_data)
 
         if result != NotImplemented:
@@ -242,7 +259,8 @@ def perform_subclasscheck(data, data_type, covariant, contravariant):
         result = data.__subclasscheck__(data_type)
 
         if data_type is not reversed_data_type:
-            if reversed_data_type is None: reversed_data_type = type(None)
+            if reversed_data_type is None:
+                reversed_data_type = type(None)
             result = result or data.__subclasscheck__(reversed_data_type)
 
         if result != NotImplemented:
@@ -295,7 +313,7 @@ def sort_and_flat_type(type_in):
 def is_named_tuple(data):
     try:
         fields = data._fields
-        field_types = getattr(data, '_field_types', {})
+        field_types = getattr(data, "_field_types", {})
 
         if type(data) == type:
             data_type = data

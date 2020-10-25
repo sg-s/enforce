@@ -6,37 +6,52 @@ from enforce.settings import Settings
 
 
 class EnforcerTests(unittest.TestCase):
-
     def func_int___none(self):
-        def func_int___none(a: int) -> None: pass
+        def func_int___none(a: int) -> None:
+            pass
+
         return func_int___none
 
     def func_int_empty___none(self):
-        def func_int_empty___none(a: int, b) -> None: pass
+        def func_int_empty___none(a: int, b) -> None:
+            pass
+
         return func_int_empty___none
 
     def func_int_empty___empty(self):
-        def func_int_empty___empty(a: int, b): pass
+        def func_int_empty___empty(a: int, b):
+            pass
+
         return func_int_empty___empty
 
     def func_empty_int_empty___empty(self):
-        def func_empty_int_empty___empty(a, b: int, c): pass
+        def func_empty_int_empty___empty(a, b: int, c):
+            pass
+
         return func_empty_int_empty___empty
 
     def func_args_kwargs__empty(self):
-        def func_args_kwargs__empty(*args, **kwargs): pass
+        def func_args_kwargs__empty(*args, **kwargs):
+            pass
+
         return func_args_kwargs__empty
 
     def func_args__empty(self):
-        def func_args__empty(*args): pass
+        def func_args__empty(*args):
+            pass
+
         return func_args__empty
 
     def func_empty_args__empty(self):
-        def func_empty_args__empty(a, *args): pass
+        def func_empty_args__empty(a, *args):
+            pass
+
         return func_empty_args__empty
 
     def func_any_args__none(self):
-        def func_any_args__none(a: Any, *args) -> None: pass
+        def func_any_args__none(a: Any, *args) -> None:
+            pass
+
         return func_any_args__none
 
     def test_can_apply_enforcer(self):
@@ -98,7 +113,7 @@ class EnforcerTests(unittest.TestCase):
 
         func = self.func_int___none()
 
-        self.assertFalse(hasattr(func, '__enforcer__'))
+        self.assertFalse(hasattr(func, "__enforcer__"))
 
         wrapped = apply_enforcer(func, settings=settings)
         enforcer = wrapped.__enforcer__
@@ -117,15 +132,14 @@ class EnforcerTests(unittest.TestCase):
 
 
 class GenericProxyTests(unittest.TestCase):
-
     def test_can_proxy_generic(self):
         """
         Verifies that Generic Proxy wraps the original user defined generic
         and applies an enforcer to it
         """
-        T = TypeVar('T')
-        K = TypeVar('K')
-        V = TypeVar('V')
+        T = TypeVar("T")
+        K = TypeVar("K")
+        V = TypeVar("V")
 
         class AG(Generic[T]):
             pass
@@ -147,16 +161,16 @@ class GenericProxyTests(unittest.TestCase):
 
         self.assertFalse(AP.__enforcer__.bound)
         self.assertFalse(BP.__enforcer__.bound)
-        
-        self.assertFalse(hasattr(AG, '__enforcer__'))
-        self.assertFalse(hasattr(BG, '__enforcer__'))
+
+        self.assertFalse(hasattr(AG, "__enforcer__"))
+        self.assertFalse(hasattr(BG, "__enforcer__"))
 
     def test_applying_to_another_proxy(self):
         """
         Verifies that applying Generic Proxy to another Generic Proxy
         will result in a new generic proxy of wrapped object being returned
         """
-        T = TypeVar('T')
+        T = TypeVar("T")
 
         class AG(Generic[T]):
             pass
@@ -178,9 +192,9 @@ class GenericProxyTests(unittest.TestCase):
         """
         types = (int, int, str)
 
-        T = TypeVar('T')
-        K = TypeVar('K')
-        V = TypeVar('V')
+        T = TypeVar("T")
+        K = TypeVar("K")
+        V = TypeVar("V")
 
         T_t, K_t, V_t = types
 
@@ -192,7 +206,7 @@ class GenericProxyTests(unittest.TestCase):
         AGT = AG[T_t, K_t, V_t]
         APT = AP[T_t, K_t, V_t]
 
-        self.assertFalse(hasattr(AGT, '__enforcer__'))
+        self.assertFalse(hasattr(AGT, "__enforcer__"))
 
         self.assertTrue(APT.__enforcer__.generic)
         self.assertTrue(APT.__enforcer__.bound)
@@ -206,7 +220,7 @@ class GenericProxyTests(unittest.TestCase):
         """
         Verifies that all proxied generics can be instantiated
         """
-        T = TypeVar('T')
+        T = TypeVar("T")
 
         class AG(Generic[T]):
             pass
@@ -222,7 +236,7 @@ class GenericProxyTests(unittest.TestCase):
         Verifies that a Generic Proxy can only be applied to valid generics
         Otherwise, it should return a type error.
         """
-        T = TypeVar('T')
+        T = TypeVar("T")
 
         class AG(Generic[T]):
             pass
@@ -257,7 +271,7 @@ class GenericProxyTests(unittest.TestCase):
         """
         Verifies that instances of generics wrapped with Generic Proxy have __enforcer__ object
         """
-        T = TypeVar('T')
+        T = TypeVar("T")
 
         class AG(Generic[T]):
             pass
@@ -268,8 +282,8 @@ class GenericProxyTests(unittest.TestCase):
         ap = AP()
         apt = APT()
 
-        self.assertTrue(hasattr(ap, '__enforcer__'))
-        self.assertTrue(hasattr(apt, '__enforcer__'))
+        self.assertTrue(hasattr(ap, "__enforcer__"))
+        self.assertTrue(hasattr(apt, "__enforcer__"))
 
         # Signature in generics should always point to the original unconstrained generic
         self.assertEqual(ap.__enforcer__.signature, AG)
@@ -290,7 +304,7 @@ class GenericProxyTests(unittest.TestCase):
         """
         Verifies that proxied generic constraints cannot contradict the TypeVar definition
         """
-        T = TypeVar('T', int, str)
+        T = TypeVar("T", int, str)
 
         class AG(Generic[T]):
             pass
@@ -303,5 +317,5 @@ class GenericProxyTests(unittest.TestCase):
             APT = AP[tuple]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

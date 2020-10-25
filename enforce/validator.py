@@ -5,8 +5,7 @@ from .utils import visit
 
 
 class Validator:
-
-    def __init__(self, parent: typing.Optional['Validator']=None):
+    def __init__(self, parent: typing.Optional["Validator"] = None):
         self.parent = parent
         self.settings = None
         self.errors = []
@@ -42,7 +41,7 @@ class Validator:
         if self.parent is not None:
             self.parent.reset()
 
-    #def __str__(self) -> str:
+    # def __str__(self) -> str:
     #    """
     #    Returns a debugging info abuot the validator's current status
     #    """
@@ -56,7 +55,9 @@ class Validator:
     #    return str_repr
 
 
-def init_validator(hints: typing.Dict, parent: typing.Optional[Validator]=None) -> Validator:
+def init_validator(
+    hints: typing.Dict, parent: typing.Optional[Validator] = None
+) -> Validator:
     """
     Returns a new validator instance from a given dictionary of type hints
     """

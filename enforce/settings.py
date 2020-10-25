@@ -7,6 +7,7 @@ class ModeChoices(enum.Enum):
     """
     All possible values for the type checking mode
     """
+
     invariant = 0
     covariant = 1
     contravariant = 2
@@ -15,7 +16,7 @@ class ModeChoices(enum.Enum):
 
 class Settings:
     def __init__(self, enabled=None, group=None):
-        self.group = group or 'default'
+        self.group = group or "default"
         self._enabled = enabled
 
     @property
@@ -23,11 +24,11 @@ class Settings:
         """
         Returns if this instance of settings is enabled
         """
-        if not _GLOBAL_SETTINGS['enabled']:
+        if not _GLOBAL_SETTINGS["enabled"]:
             return False
 
         if self._enabled is None:
-            return _GLOBAL_SETTINGS['groups'].get(self.group, False)
+            return _GLOBAL_SETTINGS["groups"].get(self.group, False)
 
         return self._enabled
 
@@ -44,21 +45,27 @@ class Settings:
         Returns currently selected type checking mode
         If it is None, then it will return invariant
         """
-        return _GLOBAL_SETTINGS['mode'] or ModeChoices.invariant
+        return _GLOBAL_SETTINGS["mode"] or ModeChoices.invariant
 
     @property
     def covariant(self):
         """
         Returns if covariant type checking mode is enabled
         """
-        return _GLOBAL_SETTINGS['mode'] in (ModeChoices.covariant, ModeChoices.bivariant)
+        return _GLOBAL_SETTINGS["mode"] in (
+            ModeChoices.covariant,
+            ModeChoices.bivariant,
+        )
 
     @property
     def contravariant(self):
         """
         Returns if contravariant type checking mode is enabled
         """
-        return _GLOBAL_SETTINGS['mode'] in (ModeChoices.contravariant, ModeChoices.bivariant)
+        return _GLOBAL_SETTINGS["mode"] in (
+            ModeChoices.contravariant,
+            ModeChoices.bivariant,
+        )
 
     def __bool__(self):
         return bool(self.enabled)
@@ -82,10 +89,11 @@ def reset_config():
     Resets the global config object to its original state
     """
     default_values = {
-        'enabled': True,
-        'default': True,
-        'mode': ModeChoices.invariant,
-        'groups': None}
+        "enabled": True,
+        "default": True,
+        "mode": ModeChoices.invariant,
+        "groups": None,
+    }
 
     keys_to_remove = []
 
@@ -100,7 +108,7 @@ def reset_config():
         if value is not None:
             _GLOBAL_SETTINGS[key] = value
 
-    _GLOBAL_SETTINGS['groups'].clear()
+    _GLOBAL_SETTINGS["groups"].clear()
 
 
 def parse_config(options):
@@ -108,16 +116,16 @@ def parse_config(options):
     Updates the default config update with a new values for config update
     """
     default_options = {
-        'enabled': None,
-        'groups': {
-            'set': {},
-            'disable_previous': False,
-            'enable_previous': False,
-            'clear_previous': False,
-            'default': None
-            },
-        'mode': None
-        }
+        "enabled": None,
+        "groups": {
+            "set": {},
+            "disable_previous": False,
+            "enable_previous": False,
+            "clear_previous": False,
+            "default": None,
+        },
+        "mode": None,
+    }
 
     return merge_dictionaries(default_options, options)
 
@@ -130,11 +138,11 @@ def apply_config(options=None, reset=False):
         reset_config()
     elif options is not None:
         for key, value in options.items():
-            if key == 'enabled':
+            if key == "enabled":
                 if value is not None:
-                    _GLOBAL_SETTINGS['enabled'] = value
+                    _GLOBAL_SETTINGS["enabled"] = value
 
-            elif key == 'groups':
+            elif key == "groups":
                 # For x_previous options, the priority is as follows:
                 # 1. Clear
                 # 2. Enable
@@ -144,60 +152,61 @@ def apply_config(options=None, reset=False):
                 previous_update = []
 
                 for k, v in value.items():
-                    if k == 'disable_previous':
+                    if k == "disable_previous":
                         if v:
-                            previous_update.append('d')
+                            previous_update.append("d")
 
-                    elif k == 'enable_previous':
+                    elif k == "enable_previous":
                         if v:
-                            previous_update.append('e')
+                            previous_update.append("e")
 
-                    elif k == 'clear_previous':
+                    elif k == "clear_previous":
                         if v:
-                            previous_update.append('c')
+                            previous_update.append("c")
 
-                    elif k == 'default':
+                    elif k == "default":
                         if v is not None:
-                            _GLOBAL_SETTINGS['default'] = value['default']
+                            _GLOBAL_SETTINGS["default"] = value["default"]
 
-                    elif k == 'set':
+                    elif k == "set":
                         for group_name, group_status in v.items():
-                            if group_name == 'default':
-                                raise KeyError('Cannot set \'default\' group status, use \'default\' option rather than \'set\'')
+                            if group_name == "default":
+                                raise KeyError(
+                                    "Cannot set 'default' group status, use 'default' option rather than 'set'"
+                                )
                             if group_status is not None:
                                 group_update[group_name] = group_status
 
                     else:
-                        raise KeyError('Unknown option for groups \'{}\''.format(k))
-                
+                        raise KeyError("Unknown option for groups '{}'".format(k))
+
                 if previous_update:
-                    if 'd' in previous_update:
-                        for group_name in _GLOBAL_SETTINGS['groups']:
-                            _GLOBAL_SETTINGS['groups'][group_name] = False
+                    if "d" in previous_update:
+                        for group_name in _GLOBAL_SETTINGS["groups"]:
+                            _GLOBAL_SETTINGS["groups"][group_name] = False
 
-                    if 'e' in previous_update:
-                        for group_name in _GLOBAL_SETTINGS['groups']:
-                            _GLOBAL_SETTINGS['groups'][group_name] = True
+                    if "e" in previous_update:
+                        for group_name in _GLOBAL_SETTINGS["groups"]:
+                            _GLOBAL_SETTINGS["groups"][group_name] = True
 
-                    if 'c' in previous_update:
-                        _GLOBAL_SETTINGS['groups'].clear()
+                    if "c" in previous_update:
+                        _GLOBAL_SETTINGS["groups"].clear()
 
-                _GLOBAL_SETTINGS['groups'].update(group_update)
+                _GLOBAL_SETTINGS["groups"].update(group_update)
 
-            elif key == 'mode':
+            elif key == "mode":
                 if value is not None:
                     try:
-                        _GLOBAL_SETTINGS['mode'] = ModeChoices[value]
+                        _GLOBAL_SETTINGS["mode"] = ModeChoices[value]
                     except KeyError:
-                        raise KeyError('Mode must be one of mode choices')
+                        raise KeyError("Mode must be one of mode choices")
             else:
-                raise KeyError('Unknown option \'{}\''.format(key))
+                raise KeyError("Unknown option '{}'".format(key))
 
 
 _GLOBAL_SETTINGS = {
-    'enabled': True,
-    'default': True,
-    'mode': ModeChoices.invariant,
-    'groups': {
-        }
-    }
+    "enabled": True,
+    "default": True,
+    "mode": ModeChoices.invariant,
+    "groups": {},
+}

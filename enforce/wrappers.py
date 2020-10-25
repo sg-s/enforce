@@ -5,7 +5,7 @@ class Proxy(CallableObjectProxy):
     """
     Transparent proxy with an option of attributes being saved on the proxy instance.
     """
-    
+
     def __init__(self, wrapped):
         """
         By default, it acts as a transparent proxy
@@ -19,28 +19,28 @@ class Proxy(CallableObjectProxy):
         if '_self_pass_through' is NOT defined
         Otherwise, it is saved on the wrapped object
         """
-        if hasattr(self, '_self_pass_through'):
+        if hasattr(self, "_self_pass_through"):
             return object.__setattr__(self.__wrapped__, name, value)
 
-        return object.__setattr__(self, '_self_'+name, value)
+        return object.__setattr__(self, "_self_" + name, value)
 
     def __getattr__(self, name):
-        if name == '__wrapped__':
-            raise ValueError('wrapper has not been initialised')
-        
+        if name == "__wrapped__":
+            raise ValueError("wrapper has not been initialised")
+
         # Clever thing - this prevents infinite recursion when this
         # attribute is not defined
-        if name == '_self_pass_through':
+        if name == "_self_pass_through":
             raise AttributeError()
 
-        if hasattr(self, '_self_pass_through'):
+        if hasattr(self, "_self_pass_through"):
             return super().__getattr__(name)
         else:
             # Attempts to return a local copy if such attribute exists
             # on the wrapped object but falls back to default behaviour
             # if there is no local copy, i.e. attribute with '_self_' prefix
             try:
-                return super().__getattr__('_self_'+name)
+                return super().__getattr__("_self_" + name)
             except AttributeError:
                 return super().__getattr__(name)
 
@@ -63,6 +63,7 @@ class EnforceProxy(ObjectProxy):
     """
     A proxy object for safe addition of runtime type enforcement without mutating the original object
     """
+
     def __init__(self, wrapped, enforcer=None):
         super().__init__(wrapped)
         self._self_enforcer = enforcer
@@ -81,7 +82,7 @@ class EnforceProxy(ObjectProxy):
         return self.__wrapped__(*args, **kwargs)
 
 
-#class ListProxy(ObjectProxy):
+# class ListProxy(ObjectProxy):
 #    # Convention: List input parameter is called 'item'
 
 #    def __init__(self, wrapped: typing.List, validator: typing.Optional['Validator']=None) -> None:
@@ -101,7 +102,7 @@ class EnforceProxy(ObjectProxy):
 
 #    def __delitem__(self, i):
 #        return self.__wrapped__.__delitem__(i)
-    
+
 #    def __add__(self, other):
 #        return self.__wrapped__.__add__(other)
 #    def __radd__(self, other): return self.__wrapped__.__radd__(other)
