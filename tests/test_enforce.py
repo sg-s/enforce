@@ -1362,7 +1362,7 @@ def func({inputs}) {returns}:
 class ConcurrentRunTests(unittest.TestCase):
 
     def test_threading(self):
-        import os, sys, concurrent.futures
+        import concurrent.futures
 
         ASSERT_ENABLED = True
 
@@ -1396,7 +1396,7 @@ class ConcurrentRunTests(unittest.TestCase):
 
     @unittest.skip('I do not even know how to debug this issue!')
     def test_processing(self):
-        import os, sys, concurrent.futures
+        import concurrent.futures
 
         ASSERT_ENABLED = True
 

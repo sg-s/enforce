@@ -76,8 +76,8 @@ class DecoratorsTests(unittest.TestCase):
         Checks if a staticmethod of a class object can be decorated
         """
         class SampleClass:
-            @runtime_validation
             @staticmethod
+            @runtime_validation
             def test(data: int) -> int:
                 return data
 
@@ -86,8 +86,8 @@ class DecoratorsTests(unittest.TestCase):
             def test2(data: int) -> int:
                 return data
 
-            @runtime_validation
             @staticmethod
+            @runtime_validation
             def test_bad(data: typing.Any) -> int:
                 return data
 
@@ -146,8 +146,8 @@ class DecoratorsTests(unittest.TestCase):
             def test2(cls, data: int) -> int:
                 return data
 
-            @runtime_validation
             @classmethod
+            @runtime_validation
             def test_bad(cls, data: typing.Any) -> int:
                 return data
 

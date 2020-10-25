@@ -5,7 +5,7 @@ from collections import namedtuple, OrderedDict
 from wrapt import ObjectProxy
 
 from .types import EnhancedTypeVar, is_type_of_type
-from .wrappers import Proxy, EnforceProxy
+from .wrappers import Proxy
 from .exceptions import RuntimeTypeError
 from .validator import init_validator, Validator
 

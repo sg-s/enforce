@@ -1,8 +1,4 @@
-import typing
-
 from wrapt import CallableObjectProxy, ObjectProxy
-
-from .exceptions import RuntimeTypeError
 
 
 class Proxy(CallableObjectProxy):

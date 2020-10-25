@@ -1,13 +1,13 @@
 import inspect
 import typing
 import functools
+from copy import copy
 from multiprocessing import RLock
-from functools import wraps
 
 from wrapt import decorator, ObjectProxy
 
 from .settings import Settings
-#from .wrappers import Proxy
+# from .wrappers import Proxy
 from .enforcers import apply_enforcer, Parameters, GenericProxy
 from .types import is_type_of_type
 
@@ -184,6 +184,9 @@ def get_typed_namedtuple(configuration, typed_namedtuple, fields, fields_types):
     init_data = decorate(init_data, configuration)
 
     class NamedTupleProxy(ObjectProxy):
+        def __copy__(self):
+          return copy(self.__wrapped__)
+
         def __call__(self, *args, **kwargs):
             data = init_data(*args, **kwargs)
             return self.__wrapped__(**data)

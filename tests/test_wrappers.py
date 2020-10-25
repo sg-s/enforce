@@ -2,10 +2,7 @@ import unittest
 import typing
 import inspect
 
-from wrapt import ObjectProxy
-
-from enforce import runtime_validation
-from enforce.wrappers import Proxy, EnforceProxy # , ListProxy
+from enforce.wrappers import EnforceProxy  # , ListProxy
 
 
 class WrapperTests(unittest.TestCase):

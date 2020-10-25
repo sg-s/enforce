@@ -1,6 +1,5 @@
 import typing
 
-from .nodes import BaseNode
 from .parsers import get_parser
 from .utils import visit
 

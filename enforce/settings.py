@@ -1,5 +1,4 @@
 import enum
-import collections
 
 from .utils import merge_dictionaries
 

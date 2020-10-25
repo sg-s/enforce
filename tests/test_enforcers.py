@@ -2,7 +2,7 @@ import unittest
 from typing import Any, Callable, TypeVar, Generic, no_type_check
 
 from enforce.enforcers import apply_enforcer, Enforcer, GenericProxy
-from enforce.settings import config, Settings
+from enforce.settings import Settings
 
 
 class EnforcerTests(unittest.TestCase):

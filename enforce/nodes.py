@@ -82,7 +82,10 @@ class BaseNode:
         else:
             valid = any(result.valid for result in child_validation_results)
 
-        actual_type = self.get_actual_data_type(self_validation_result, child_validation_results, valid)
+        actual_type = self.get_actual_data_type(
+          self_validation_result=self_validation_result,
+          child_validation_results=child_validation_results,
+          valid=valid)
 
         # 6
         if not valid or not self_validation_result.valid:
@@ -169,7 +172,7 @@ class BaseNode:
         """
         return data
 
-    def validate_data(self, validator, data, sticky=False) -> bool:
+    def validate_data(self, validator, data, sticky=False) -> ValidationResult:
         """
         Responsible for determining if node is of specific type
         """
@@ -470,9 +473,9 @@ class CallableNode(BaseNode):
                 return apply_enforcer(data)
 
     def validate_data(self, validator, data, sticky=False):
-        try:
-            input_type = type(data)
+        input_type = type(data)
 
+        try:
             callable_signature = data.__enforcer__.callable_signature
 
             if self.expected_data_type.__args__ is None:
