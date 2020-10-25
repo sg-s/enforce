@@ -226,7 +226,7 @@ def _yield_parsing_result(node, new_node):
 TYPE_PARSERS = {
     UnionMeta: _parse_union,
     # typing.TupleMeta: _parse_tuple,
-    typing.GenericMeta: _parse_generic,
+    # typing.GenericMeta: _parse_generic,
     # typing.CallableMeta: _parse_callable,
     typing.TypeVar: _parse_type_var,
     EnhancedTypeVar: _parse_type_var,
